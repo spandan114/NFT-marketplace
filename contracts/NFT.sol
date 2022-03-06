@@ -11,7 +11,7 @@ contract NFT is  ERC721URIStorage {
     Counters.Counter private _tokenIdCounter;
     address marketPlaceContractAddress;
 
-    constructor(address marketPlaceAddress) ERC721("Shaktiman NFT", "SM") {
+    constructor(address marketPlaceAddress) ERC721("Exchange NFT", "EXNFT") {
         marketPlaceContractAddress = marketPlaceAddress;
     }
 
