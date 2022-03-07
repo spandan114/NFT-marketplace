@@ -18,7 +18,7 @@ contract NFT is  ERC721URIStorage {
     function safeMint(string memory uri) public payable returns(uint) {
         _tokenIdCounter.increment();
         uint256 tokenId = _tokenIdCounter.current();
-        _safeMint(msg.sender, tokenId);
+        _mint(msg.sender, tokenId);
         _setTokenURI(tokenId, uri);
         setApprovalForAll(marketPlaceContractAddress,true);
         return tokenId;
