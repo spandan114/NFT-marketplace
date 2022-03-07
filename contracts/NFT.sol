@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract NFT is  ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
-    address marketPlaceContractAddress;
+    address public marketPlaceContractAddress;
 
     constructor(address marketPlaceAddress) ERC721("Exchange NFT", "EXNFT") {
         marketPlaceContractAddress = marketPlaceAddress;
