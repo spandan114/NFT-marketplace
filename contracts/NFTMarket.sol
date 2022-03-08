@@ -50,7 +50,7 @@ contract NFTMarket is ReentrancyGuard{
       address owner
 	  );
 
-    event Sale(
+    event Sold(
       address nftContract,
       address owner,
       address creator,
@@ -80,8 +80,8 @@ contract NFTMarket is ReentrancyGuard{
 
       emit Item(
         _nftContract,
-        payable(msg.sender),
         payable(address(0)),
+        payable(msg.sender),
         _tokenId,
         _price
       );
@@ -90,7 +90,7 @@ contract NFTMarket is ReentrancyGuard{
 
     function cancelSell(uint256 _tokenId) public {
        _Item storage listedItem = Items[_tokenId];
-      require(msg.sender == listedItem.owner, "Only owner can cancel listing");
+      require(msg.sender == listedItem.owner || msg.sender == listedItem.creator, "Only owner can cancel listing");
 		  require(listedItem.status == ListingStatus.Active, "Listing is not active");
 
       listedItem.status = ListingStatus.Cancelled;
@@ -101,6 +101,7 @@ contract NFTMarket is ReentrancyGuard{
 
     function buyItem(uint256 _tokenId) payable public nonReentrant {
         _Item storage listedItem = Items[_tokenId];
+
         require(listedItem.price == msg.value, 'Price must be equal to NFT price');
         
         //Update the owner & status
@@ -114,16 +115,12 @@ contract NFTMarket is ReentrancyGuard{
         }
         ownerAddress.transfer(msg.value);
         //Tranfer NFT to the new owner
-        address transferAddress = listedItem.creator;
-        if(listedItem.owner == address(0)){
-          transferAddress = address(this);
-        }
-        ownerAddress.transfer(msg.value);
-        IERC721(listedItem.nftContract).transferFrom(transferAddress, msg.sender, listedItem.token);
+
+        IERC721(listedItem.nftContract).transferFrom(address(this), msg.sender, listedItem.token);
 
         payable(owner).transfer(mintingCost);
 
-        emit Sale(
+        emit Sold(
           listedItem.nftContract,
           msg.sender,
           listedItem.creator,

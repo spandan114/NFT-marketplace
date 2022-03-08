@@ -55,17 +55,71 @@ describe("NFT Market", async function () {
         expect(event.events.length).to.equal(3);
         expect(event.events[2].event).to.equal("Item");
         expect(event.events[2].args.nftContract).to.equal(nftContract.address);
-        expect(event.events[2].args.owner).to.equal(address1.address);
-        expect(event.events[2].args.creator).to.equal("0x0000000000000000000000000000000000000000");
+        expect(event.events[2].args.owner).to.equal("0x0000000000000000000000000000000000000000");
+        expect(event.events[2].args.creator).to.equal(address1.address);
         expect(event.events[2].args.token).to.equal(1);
         expect(event.events[2].args.price).to.equal(auctionPrice);
 
       })
 
+      it("Should fail if listing price less then equal to zero ", async () => {
+        await nftContract.connect(address1).safeMint("www.myNFT.com")
+        await expect(marketplaceContract.connect(address1).sellItem(1,0,nftContract.address,{value:mintingCost})).to.be.revertedWith('Price must be at least 1 wei');
+      })
+
+      it("Should fail if minting cost is less then equal to zero ", async () => {
+        await nftContract.connect(address1).safeMint("www.myNFT.com")
+        await expect(marketplaceContract.connect(address1).sellItem(1,auctionPrice,nftContract.address,{value:0})).to.be.revertedWith('Price must be equal to listing price');
+      })
+
    })
 
    describe("Cancel NFT sell & Buy NFT", async function () {
-    //TODO:
+    it(`Buy NFT`,async function (){
+      await nftContract.connect(address1).safeMint("www.myNFT.com")
+      await marketplaceContract.connect(address1).sellItem(1,auctionPrice,nftContract.address,{value:mintingCost});
+      var NFTSold = await marketplaceContract.connect(address2).buyItem(1,{value:auctionPrice.toString()})
+      const event = await NFTSold.wait();
+
+      expect(event.events.length).to.equal(3);
+      expect(event.events[2].event).to.equal("Sold");
+      expect(event.events[2].args.nftContract).to.equal(nftContract.address);
+      expect(event.events[2].args.owner).to.equal(address2.address);
+      expect(event.events[2].args.creator).to.equal(address1.address);
+      expect(event.events[2].args.token).to.equal(1);
+      expect(event.events[2].args.price).to.equal(auctionPrice);
+
+    })
+
+    it(`Cancel NFT`,async function (){
+      await nftContract.connect(address1).safeMint("www.myNFT.com")
+      await marketplaceContract.connect(address1).sellItem(1,auctionPrice,nftContract.address,{value:mintingCost});
+
+      const getNft = await marketplaceContract.Items(1)
+
+      var sellCancel = await marketplaceContract.connect(address1).cancelSell(1)
+      const event = await sellCancel.wait();
+
+      expect(event.events.length).to.equal(3);
+      expect(event.events[2].event).to.equal("CancelSell");
+      expect(event.events[2].args.token).to.equal(1);
+      expect(event.events[2].args.owner).to.equal(getNft.owner);
+    })
+
+    it("Should fail if txn amount not equal to NFT price ", async () => {
+      await nftContract.connect(address1).safeMint("www.myNFT.com")
+      await marketplaceContract.connect(address1).sellItem(1,auctionPrice,nftContract.address,{value:mintingCost});
+
+      await expect(marketplaceContract.connect(address2).buyItem(1,{value:"1000"})).to.be.revertedWith('Price must be equal to NFT price');
+    })
+
+    it("Should fail if someone else cancel the sell ", async () => {
+      await nftContract.connect(address1).safeMint("www.myNFT.com")
+      await marketplaceContract.connect(address1).sellItem(1,auctionPrice,nftContract.address,{value:mintingCost});
+
+      await expect(marketplaceContract.connect(address2).cancelSell(1)).to.be.revertedWith("Only owner can cancel listing");
+    })
+
    })
 
 });
