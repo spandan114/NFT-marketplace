@@ -1,9 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Long+Cang&family=Luckiest+Guy&family=Open+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --black: #191c1b;
+  --light-black-s: #3f4944;
+  --light-black-p: #303a36;
+  --white: #ffffff;
+  --background:#e6e6e6;
+  /* Fonts */
+  --header: 'Luckiest Guy', cursive;
+  --sub-header: 'Long Cang', cursive;
+  --primary:'Open Sans', sans-serif;
+}
+
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  background: var(--background);
 }
 
 a {
@@ -13,4 +26,24 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+.header-text{
+  font-family: var(--header);
+  font-style: normal;
+  font-weight: normal;
+  font-size: 70px;
+  line-height: 70px;
+  color: #000000;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.sub-header-text{
+  font-family: var(--sub-header);
+  font-style: normal;
+  font-weight: normal;
+  font-size: 29px;
+  line-height: 29px;
+  text-align: center;
 }
