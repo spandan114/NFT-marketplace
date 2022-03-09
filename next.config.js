@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['www.larvalabs.com', 'i.ibb.co'],
+    domains: ['www.larvalabs.com','openseauserdata.com', 'i.ibb.co'],
   },
 }
 

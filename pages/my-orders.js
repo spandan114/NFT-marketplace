@@ -1,21 +1,10 @@
-import Head from "next/head";
-import Image from "next/image";
+import React from "react";
 import CardComponent from "../components/Card";
 import { basicAuth } from "../helpers/AuthHelper";
 
-const Home = () => {
+const MyOrders = () => {
   return (
-    <div className="container home">
-      <Head>
-        <title>Home</title>
-      </Head>
-
-      <h1 className={"header-text"}>NFT Market</h1>
-      <h5 className={"sub-header-text"}>
-        Lorem Ipsum is simply dummy text of the printing and typesetting
-        industry.
-      </h5>
-
+    <div className="container">
       <div className="row mt-4">
         <div className="col-md-3">
           <CardComponent />
@@ -34,4 +23,4 @@ const Home = () => {
   );
 };
 
-export default basicAuth(Home);
+export default basicAuth(MyOrders);

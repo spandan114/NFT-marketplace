@@ -28,6 +28,18 @@ a {
   box-sizing: border-box;
 }
 
+.logo{
+  font-weight: bold !important;
+  font-family: var(--header) !important;
+  font-size: 2rem;
+  letter-spacing: 3px;
+}
+
+.nav-item{
+   color: var(--black) !important;
+   cursor: pointer !important;
+} 
+
 .header-text{
   font-family: var(--header);
   font-style: normal;
@@ -46,4 +58,39 @@ a {
   font-size: 29px;
   line-height: 29px;
   text-align: center;
+}
+
+.root .card{
+  border-radius: 10px !important;
+}
+.root .card span{
+  width: 100% !important;
+  height: 300px !important;
+}
+.root .card img{
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.root .card .card-body small{
+  font-family: Open Sans;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 18px;
+  /* text-align: center; */
+}
+
+.root .card .card-body p{
+  font-family: Open Sans;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 25px
+}
+
+.create-nft button{
+  width: 100% !important;
 }
