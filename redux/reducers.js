@@ -15,11 +15,6 @@ const initialState = {};
           ...state,
           account: action.payload,
         };
-      case types.WALLET_BALANCE_LOADED:
-        return {
-          ...state,
-          walletEtherBalance: action.payload,
-        };
       default:
         return state;
     }
