@@ -30,3 +30,9 @@ const weiToEther = (num) =>{
     }
 
   }
+
+  export const loadAccount = async(provider,dispatch) =>{
+    const signer = provider.getSigner();
+    const connectedWallet = await signer.getAddress();
+    dispatch(actions.walletAddressLoaded(connectedWallet))
+  }

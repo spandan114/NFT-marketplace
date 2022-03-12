@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.5.0",
+    "axios": "^0.26.1",
+    "ipfs-http-client": "^56.0.1",
     "next": "12.1.0",
     "next-redux-wrapper": "^7.0.5",
     "react": "17.0.2",
