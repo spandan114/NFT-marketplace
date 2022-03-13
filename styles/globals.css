@@ -94,3 +94,7 @@ a {
 .create-nft button{
   width: 100% !important;
 }
+
+.attribute button{
+width: 30% !important;
+}
