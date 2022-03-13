@@ -17,9 +17,9 @@ const weiToEther = (num) =>{
   }
   
   export const loadContracts = async(provider,dispatch) =>{
-
-    const nftMarketplaceContract = new ethers.Contract(marketPlaceAddress, NFTMarketContract.abi, provider);
-    const nftContract = new ethers.Contract(nftAddress, NFTContract.abi, provider);
+    const signer = provider.getSigner();
+    const nftMarketplaceContract = new ethers.Contract(marketPlaceAddress, NFTMarketContract.abi, signer);
+    const nftContract = new ethers.Contract(nftAddress, NFTContract.abi, signer);
 
     dispatch(actions.nftMarketplaceContractLoaded(nftMarketplaceContract))
     dispatch(actions.nftContractLoaded(nftContract))

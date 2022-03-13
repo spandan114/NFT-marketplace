@@ -98,3 +98,7 @@ a {
 .attribute button{
 width: 30% !important;
 }
+
+.attr-badge{
+  background: var(--light-black-s);
+}

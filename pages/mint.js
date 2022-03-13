@@ -1,15 +1,24 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { basicAuth } from "../helpers/AuthHelper";
+import { toast } from 'react-toastify';
 import { create } from "ipfs-http-client";
+import { useSelector } from "react-redux";
 const client = create("https://ipfs.infura.io:5001/api/v0");
 
 const Mint = () => {
+  const formRef = useRef(null);
   const [file, setFile] = useState("");
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [attributes, setAttributes] = useState(null);
   const [fileUrl, setFileUrl] = useState("");
+  const [loader, setLoader] = useState(false);
+
+  const web3Provider = useSelector(state=>state.web3Reducer.connection)
+  const walletAddress = useSelector(state=>state.web3Reducer.account)
+  const nftReducer = useSelector(state=>state.nftReducer.contract)
+  const nftMarketplaceReducer = useSelector(state=>state.nftMarketplaceReducer.contract)
 
   const addAttribute = (e) => {
     e.preventDefault();
@@ -22,13 +31,13 @@ const Mint = () => {
           value: e.target.value.value,
         },
       ];
-      setAttributes(attr);
-      console.log(attr);
+      setAttributes(attr)
     } else {
       setAttributes([
         { id: 0, trait_type: e.target.key.value, value: e.target.value.value },
       ]);
     }
+    formRef.current.reset();
   };
 
   const removeAttribute = (id) => {
@@ -36,36 +45,88 @@ const Mint = () => {
     setAttributes(filteredAttr);
   };
 
-  async function uploadImageToIPFS(e) {
-    e.preventDefault();
+  const uploadImageToIPFS = async()=> {
+    setLoader(true)
+    if (!name || !description || !price || !file) {
+      toast.error("Please fill all the required fields !", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    };
 
-    console.log(file);
-    // try {
-    //   const added = await client.add(file)
-    //   const url = `https://ipfs.infura.io/ipfs/${added.path}`
-    //   await uploadMetadataToIPFS(url)
-    // } catch (error) {
-    //   console.log('Error uploading file: ', error)
-    // }
+    try {
+      const added = await client.add(file)
+      const url = `https://ipfs.infura.io/ipfs/${added.path}`
+      await uploadMetadataToIPFS(url)
+    } catch (error) {
+      setLoader(false)
+      toast.error("Image upload failed !", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+      console.log('Error uploading file: ', error)
+    }
   }
 
-  async function uploadMetadataToIPFS(name, description, attributes, fileUrl) {
+  const uploadMetadataToIPFS = async(fileUrl) => {
     if (!name || !description || !price || !fileUrl) return;
     /* first, upload to IPFS */
     const data = JSON.stringify({
       name: name,
       description: description,
-      attributes: attributes,
       image: fileUrl,
+      attributes: attributes
     });
     try {
       const added = await client.add(data);
       const url = `https://ipfs.infura.io/ipfs/${added.path}`;
       /* after file is uploaded to IPFS, return the URL to use it in the transaction */
+      await mintNFT(url)
+      
       return url;
     } catch (error) {
+      setLoader(false)
+      toast.error("Meta data upload failed !", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
       console.log("Error uploading file: ", error);
     }
+  }
+
+  const mintNFT = async(metadata) =>{
+try {
+  const tx = await nftReducer.safeMint(metadata,{from:walletAddress})
+  const receipt = await tx.wait();
+  console.log(receipt)
+  setLoader(false)
+} catch (error) {
+  toast.error(error.message, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    });
+
+}
   }
 
   return (
@@ -121,32 +182,36 @@ const Mint = () => {
           ></textarea>
         </div>
 
-        <form onSubmit={(e) => addAttribute(e)}>
+        <form onSubmit={(e) => addAttribute(e)} ref={formRef}>
           <div className="mb-3">
             <label htmlFor="attributes" className="form-label">
               Attributes
             </label>
-
+          <div  className="d-flex flex-wrap">
             {
-  attributes?
-  attributes.map((attr,i)=>(
-     <p key={i}>{attr.trait_type}</p>
-  ))
-  :""
-}
-
+              attributes?
+              attributes.map((attr,i)=>{
+                return (
+                  <span key={i} className="m-1 badge attr-badge" onClick={()=>removeAttribute(attr.id)}>{attr.trait_type}:{attr.value}</span>
+                )
+              })
+              :""
+            }
+          </div>
             <div className="d-flex attribute">
               <input
                 type="text"
                 name="key"
                 className="form-control m-1"
                 placeholder="Key"
+                required
               />
               <input
                 type="text"
                 name="value"
                 className="form-control m-1"
                 placeholder="Value"
+                required
               />
               <button type="submit" className="btn btn-primary mb-2 btn-sm">
                 Add
@@ -154,7 +219,7 @@ const Mint = () => {
             </div>
           </div>
         </form>
-        <button type="submit" className="btn btn-success btn-block">
+        <button type="submit" className="btn btn-success btn-block" onClick={()=>mintNFT("abcd.com")}>
           Mint NFT
         </button>
       </div>

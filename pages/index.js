@@ -1,24 +1,9 @@
 import Head from "next/head";
 import Image from "next/image";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
 import CardComponent from "../components/Card";
 import { basicAuth } from "../helpers/AuthHelper";
-import { loadAccount, loadContracts, loadWeb3 } from "../redux/interactions";
 
 const Home = () => {
-
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    loadBlockchain()
-  }, [])
-
-  const loadBlockchain = async()=>{
-    const provider = await loadWeb3(dispatch)
-    await loadContracts(provider,dispatch)
-    await loadAccount(provider,dispatch)
-  }
 
   return (
     <div className="container home">

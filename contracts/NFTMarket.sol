@@ -5,7 +5,7 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-
+import "./NFT.sol";
 // [X] Create & List Nft
 // [X] Buy NFT
 // [X] Sell NFT
@@ -60,17 +60,19 @@ contract NFTMarket is ReentrancyGuard{
 
     mapping(uint => _Item) public Items;
 
-    function sellItem(uint256 _tokenId,uint256 _price,address _nftContract) payable public nonReentrant{
+    function sellItem(string memory uri,uint256 _price,address _nftContract) payable public nonReentrant{
       require(_price > 0, "Price must be at least 1 wei");
       require(msg.value == mintingCost, "Price must be equal to listing price");
 
       _itemId.increment();
       uint256 itemId = _itemId.current();
 
+      uint256 _tokenId = NFT(_nftContract).safeMint(uri,address(this),msg.sender);
+
       Items[itemId] =  _Item(
           ListingStatus.Active,
           _nftContract,
-          payable(address(0)),
+          payable(address(this)),
           payable(msg.sender),
           _tokenId,
           _price
@@ -80,7 +82,7 @@ contract NFTMarket is ReentrancyGuard{
 
       emit Item(
         _nftContract,
-        payable(address(0)),
+        payable(address(this)),
         payable(msg.sender),
         _tokenId,
         _price

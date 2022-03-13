@@ -9,18 +9,15 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract NFT is  ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
-    address public marketPlaceContractAddress;
 
-    constructor(address marketPlaceAddress) ERC721("Exchange NFT", "EXNFT") {
-        marketPlaceContractAddress = marketPlaceAddress;
-    }
+    constructor() ERC721("Exchange NFT", "EXNFT") {}
 
-    function safeMint(string memory uri) public payable returns(uint) {
+    function safeMint(string memory uri,address marketPlaceAddress,address creator) public payable returns(uint) {
         _tokenIdCounter.increment();
         uint256 tokenId = _tokenIdCounter.current();
-        _mint(msg.sender, tokenId);
+        _mint(creator, tokenId);
         _setTokenURI(tokenId, uri);
-        setApprovalForAll(marketPlaceContractAddress,true);
+        _setApprovalForAll(creator,marketPlaceAddress,true);
         return tokenId;
     }
 

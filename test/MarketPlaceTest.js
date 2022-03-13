@@ -22,14 +22,11 @@ describe("NFT Market", async function () {
     marketplaceContract = await marketplace.deploy();
 
     nft = await ethers.getContractFactory("NFT");  
-    nftContract = await nft.deploy(marketplaceContract.address);
+    nftContract = await nft.deploy();
 
   })
 
    describe("Deployment Test", async function () {
-      it(`NFT registered marketplace address must be equal to Marketplace address `,async function (){
-        expect(await nftContract.marketPlaceContractAddress()).to.equal(marketplaceContract.address);
-      })
       it(`NFT symbol must be EXNFT`,async function (){
         expect(await nftContract.symbol()).to.equal("EXNFT");
       })
@@ -39,45 +36,42 @@ describe("NFT Market", async function () {
    })
 
    describe("Mint & List NFT", async function () {
-      it(`Mint NFT `,async function (){
-        await nftContract.connect(address1).safeMint("www.myNFT.com")
-        expect(await nftContract.tokenURI(1)).to.equal("www.myNFT.com");
-        expect(await nftContract.ownerOf(1)).to.equal(address1.address);
-        expect(await nftContract.balanceOf(address1.address)).to.equal(1);
+      // it(`Mint NFT `,async function (){
+      //   await nftContract.connect(address1).safeMint("www.myNFT.com")
+      //   expect(await nftContract.tokenURI(1)).to.equal("www.myNFT.com");
+      //   expect(await nftContract.ownerOf(1)).to.equal(address1.address);
+      //   expect(await nftContract.balanceOf(address1.address)).to.equal(1);
 
-      })
+      // })
 
       it(`List NFT in marketplace`,async function (){
-        await nftContract.connect(address1).safeMint("www.myNFT.com")
-        const listedNft = await marketplaceContract.connect(address1).sellItem(1,auctionPrice,nftContract.address,{value:mintingCost});
+
+        const listedNft = await marketplaceContract.connect(address1).sellItem("www.myNFT.com",auctionPrice,nftContract.address,{value:mintingCost});
         
         const event = await listedNft.wait();
-        expect(event.events.length).to.equal(3);
-        expect(event.events[2].event).to.equal("Item");
-        expect(event.events[2].args.nftContract).to.equal(nftContract.address);
-        expect(event.events[2].args.owner).to.equal("0x0000000000000000000000000000000000000000");
-        expect(event.events[2].args.creator).to.equal(address1.address);
-        expect(event.events[2].args.token).to.equal(1);
-        expect(event.events[2].args.price).to.equal(auctionPrice);
+        expect(event.events.length).to.equal(5);
+        expect(event.events[4].event).to.equal("Item");
+        expect(event.events[4].args.nftContract).to.equal(nftContract.address);
+        expect(event.events[4].args.owner).to.equal(marketplaceContract.address);
+        expect(event.events[4].args.creator).to.equal(address1.address);
+        expect(event.events[4].args.token).to.equal(1);
+        expect(event.events[4].args.price).to.equal(auctionPrice);
 
       })
 
       it("Should fail if listing price less then equal to zero ", async () => {
-        await nftContract.connect(address1).safeMint("www.myNFT.com")
-        await expect(marketplaceContract.connect(address1).sellItem(1,0,nftContract.address,{value:mintingCost})).to.be.revertedWith('Price must be at least 1 wei');
+        await expect(marketplaceContract.connect(address1).sellItem("www.myNFT.com",0,nftContract.address,{value:mintingCost})).to.be.revertedWith('Price must be at least 1 wei');
       })
 
       it("Should fail if minting cost is less then equal to zero ", async () => {
-        await nftContract.connect(address1).safeMint("www.myNFT.com")
-        await expect(marketplaceContract.connect(address1).sellItem(1,auctionPrice,nftContract.address,{value:0})).to.be.revertedWith('Price must be equal to listing price');
+        await expect(marketplaceContract.connect(address1).sellItem("www.myNFT.com",auctionPrice,nftContract.address,{value:0})).to.be.revertedWith('Price must be equal to listing price');
       })
 
    })
 
    describe("Cancel NFT sell & Buy NFT", async function () {
     it(`Buy NFT`,async function (){
-      await nftContract.connect(address1).safeMint("www.myNFT.com")
-      await marketplaceContract.connect(address1).sellItem(1,auctionPrice,nftContract.address,{value:mintingCost});
+      await marketplaceContract.connect(address1).sellItem("www.myNFT.com",auctionPrice,nftContract.address,{value:mintingCost});
       var NFTSold = await marketplaceContract.connect(address2).buyItem(1,{value:auctionPrice.toString()})
       const event = await NFTSold.wait();
 
@@ -92,8 +86,7 @@ describe("NFT Market", async function () {
     })
 
     it(`Cancel NFT`,async function (){
-      await nftContract.connect(address1).safeMint("www.myNFT.com")
-      await marketplaceContract.connect(address1).sellItem(1,auctionPrice,nftContract.address,{value:mintingCost});
+      await marketplaceContract.connect(address1).sellItem("www.myNFT.com",auctionPrice,nftContract.address,{value:mintingCost});
 
       const getNft = await marketplaceContract.Items(1)
 
@@ -107,15 +100,13 @@ describe("NFT Market", async function () {
     })
 
     it("Should fail if txn amount not equal to NFT price ", async () => {
-      await nftContract.connect(address1).safeMint("www.myNFT.com")
-      await marketplaceContract.connect(address1).sellItem(1,auctionPrice,nftContract.address,{value:mintingCost});
+      await marketplaceContract.connect(address1).sellItem("www.myNFT.com",auctionPrice,nftContract.address,{value:mintingCost});
 
       await expect(marketplaceContract.connect(address2).buyItem(1,{value:"1000"})).to.be.revertedWith('Price must be equal to NFT price');
     })
 
     it("Should fail if someone else cancel the sell ", async () => {
-      await nftContract.connect(address1).safeMint("www.myNFT.com")
-      await marketplaceContract.connect(address1).sellItem(1,auctionPrice,nftContract.address,{value:mintingCost});
+      await marketplaceContract.connect(address1).sellItem("www.myNFT.com",auctionPrice,nftContract.address,{value:mintingCost});
 
       await expect(marketplaceContract.connect(address2).cancelSell(1)).to.be.revertedWith("Only owner can cancel listing");
     })
