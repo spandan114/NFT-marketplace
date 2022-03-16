@@ -6,10 +6,17 @@ import NFTContract from "../artifacts/contracts/NFT.sol/NFT.json"
 var marketPlaceAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
 var nftAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
 
-const weiToEther = (num) =>{
+export const weiToEther = (num) =>{
     return ethers.utils.formatEther(num)
 }
 
+export const etherToWei = (n) => {
+  const weiBigNumber = ethers.utils.parseEther(n.toString());
+  const wei = weiBigNumber.toString();
+  return wei
+}
+
+console.log(etherToWei("1"))
  export const loadWeb3 = async(dispatch)=>{
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     dispatch(actions.web3Loaded(provider))

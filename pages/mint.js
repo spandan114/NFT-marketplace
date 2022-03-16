@@ -3,6 +3,7 @@ import { basicAuth } from "../helpers/AuthHelper";
 import { toast } from 'react-toastify';
 import { create } from "ipfs-http-client";
 import { useSelector } from "react-redux";
+import { etherToWei } from "../redux/interactions";
 const client = create("https://ipfs.infura.io:5001/api/v0");
 
 const Mint = () => {
@@ -12,10 +13,8 @@ const Mint = () => {
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [attributes, setAttributes] = useState(null);
-  const [fileUrl, setFileUrl] = useState("");
   const [loader, setLoader] = useState(false);
 
-  const web3Provider = useSelector(state=>state.web3Reducer.connection)
   const walletAddress = useSelector(state=>state.web3Reducer.account)
   const nftReducer = useSelector(state=>state.nftReducer.contract)
   const nftMarketplaceReducer = useSelector(state=>state.nftMarketplaceReducer.contract)
@@ -110,23 +109,43 @@ const Mint = () => {
   }
 
   const mintNFT = async(metadata) =>{
-try {
-  const tx = await nftReducer.safeMint(metadata,{from:walletAddress})
-  const receipt = await tx.wait();
-  console.log(receipt)
-  setLoader(false)
-} catch (error) {
-  toast.error(error.message, {
-    position: "top-right",
-    autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    });
+    try {
+      
+      const tx = await nftMarketplaceReducer.sellItem(metadata,etherToWei(price),nftReducer.address,{from:walletAddress,value:etherToWei("0.0001")})
+      const receipt = await tx.wait();
+      console.log(receipt)
+      console.log("NFT metadata : ",metadata)
 
-}
+      setFile("")
+      setName("")
+      setPrice("")
+      setDescription("")
+      setAttributes("")
+
+      toast.success("NFT minted successfully 🎉", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+
+      setLoader(false)
+    } catch (error) {
+      setLoader(false)
+      toast.error(error.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+
+    }
   }
 
   return (
@@ -219,8 +238,8 @@ try {
             </div>
           </div>
         </form>
-        <button type="submit" className="btn btn-success btn-block" onClick={()=>mintNFT("abcd.com")}>
-          Mint NFT
+        <button type="submit" className="btn btn-success btn-block" onClick={()=>uploadImageToIPFS()} disabled={loader}>
+          {loader?"Minting...":"Mint NFT"}
         </button>
       </div>
     </div>

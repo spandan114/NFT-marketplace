@@ -14,6 +14,7 @@ import "./NFT.sol";
 contract NFTMarket is ReentrancyGuard{
     using Counters for Counters.Counter;
     Counters.Counter private _itemId;
+    Counters.Counter private _itemsSold;
     
     address payable owner;
     uint256 public mintingCost = 0.0001 ether;
@@ -117,7 +118,7 @@ contract NFTMarket is ReentrancyGuard{
         }
         ownerAddress.transfer(msg.value);
         //Tranfer NFT to the new owner
-
+        _itemsSold.increment();
         IERC721(listedItem.nftContract).transferFrom(address(this), msg.sender, listedItem.token);
 
         payable(owner).transfer(mintingCost);
@@ -131,5 +132,73 @@ contract NFTMarket is ReentrancyGuard{
         );
 
     }    
+
+     // Fetch all unsold items
+
+    function fetchMarketItems() public view returns (_Item[] memory) {
+      uint itemCount = _itemId.current();
+      uint unsoldItemCount = _itemId.current() - _itemsSold.current();
+      uint currentIndex = 0;
+
+      _Item[] memory items = new _Item[](unsoldItemCount);
+      for (uint i = 0; i < itemCount; i++) {
+        if (Items[i + 1].owner == address(this)) {
+          uint currentId = i + 1;
+          _Item storage currentItem = Items[currentId];
+          items[currentIndex] = currentItem;
+          currentIndex += 1;
+        }
+      }
+      return items;
+    }
+
+    // Fetch creator NFT's
+    function fetchCreatorItemsListed() public view returns (_Item[] memory) {
+      uint totalItemCount = _itemId.current();
+      uint itemCount = 0;
+      uint currentIndex = 0;
+
+      for (uint i = 0; i < totalItemCount; i++) {
+        if (Items[i + 1].creator == msg.sender) {
+          itemCount += 1;
+        }
+      }
+
+      _Item[] memory items = new _Item[](itemCount);
+      for (uint i = 0; i < totalItemCount; i++) {
+        if (Items[i + 1].creator == msg.sender) {
+          uint currentId = i + 1;
+          _Item storage currentItem = Items[currentId];
+          items[currentIndex] = currentItem;
+          currentIndex += 1;
+        }
+      }
+      return items;
+    }
+
+
+    // Fetch owner NFT's
+    function fetchOwnerItemsListed() public view returns (_Item[] memory) {
+      uint totalItemCount = _itemId.current();
+      uint itemCount = 0;
+      uint currentIndex = 0;
+
+      for (uint i = 0; i < totalItemCount; i++) {
+        if (Items[i + 1].owner == msg.sender) {
+          itemCount += 1;
+        }
+      }
+
+      _Item[] memory items = new _Item[](itemCount);
+      for (uint i = 0; i < totalItemCount; i++) {
+        if (Items[i + 1].owner == msg.sender) {
+          uint currentId = i + 1;
+          _Item storage currentItem = Items[currentId];
+          items[currentIndex] = currentItem;
+          currentIndex += 1;
+        }
+      }
+      return items;
+    }
 
 }

@@ -9,7 +9,7 @@ async function main() {
   const NFTMarketContract = await NFTMarket.deploy();
 
   const NFT = await hre.ethers.getContractFactory("NFT");
-  const NFTContract = await NFT.deploy(NFTMarketContract.address);
+  const NFTContract = await NFT.deploy();
 
   await NFTMarketContract.deployed();
   await NFTContract.deployed();
