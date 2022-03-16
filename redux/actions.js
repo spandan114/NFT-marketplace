@@ -23,6 +23,27 @@ export const nftContractLoaded = (contract) =>{
     }
 }
 
+export const unsoldNFTLoaded = (nftList) =>{
+    return{
+        type:types.UNSOLD_NFT_LOADED,
+        payload:nftList
+    }
+}
+
+export const mintedNFTLoaded = (nftList) =>{
+    return{
+        type:types.MINTED_NFT_LOADED,
+        payload:nftList
+    }
+}
+
+export const ownedNFTLoaded = (nftList) =>{
+    return{
+        type:types.OWNED_NFT_LOADED,
+        payload:nftList
+    }
+}
+
 // MARKETPLACE ACTIONS
 
 export const nftMarketplaceContractLoaded = (contract) =>{
