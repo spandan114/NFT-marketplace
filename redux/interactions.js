@@ -92,5 +92,5 @@ export const etherToWei = (n) => {
       return res;
     }))
 
-    dispatch(actions.unsoldNFTLoaded(formattedNFTList))
+    dispatch(actions.ownedNFTLoaded(formattedNFTList))
   }

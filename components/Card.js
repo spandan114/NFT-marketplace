@@ -1,12 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const CardComponent = () => {
+const CardComponent = ({nftData}) => {
   return (
     <div className="root">
           <div className="card">
-      <Image 
-        src={"https://openseauserdata.com/files/a5509bca116d1e1d98cfb14c5c2c61b7.svg"  }
+      {/*  eslint-disable-next-line @next/next/no-img-element */}
+      <img 
+        src={nftData.image}
         className="card-img-top"
         width={"100%"}
         height={"100%"}
@@ -15,12 +16,12 @@ const CardComponent = () => {
       <div className="card-body">
         <div className="d-flex justify-content-between">
         <div className="d-flex flex-column">
-          <small>#122345</small>
-          <p>NFT name</p>
+          <small>#{nftData.token}</small>
+          <p>{nftData.name}</p>
         </div>
         <div className="d-flex flex-column">
           <small>Bid price</small>
-          <p><i className="fab fa-ethereum"></i> 1.2</p>
+          <p><i className="fab fa-ethereum"></i> {nftData.price}</p>
         </div>
         </div>
 

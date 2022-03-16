@@ -5,7 +5,8 @@ export const basicAuth = (WrappedComponent) => {
   return (props) => {
     if (typeof window !== "undefined") {
       return (
-        <>
+        < >
+
           <NavBar />
           <WrappedComponent {...props} />
         </>

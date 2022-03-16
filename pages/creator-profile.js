@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CardComponent from "../components/Card";
+import Spinner from "../components/Spinner";
 import { basicAuth } from "../helpers/AuthHelper";
 import { loadMintedNFT } from "../redux/interactions";
 
@@ -14,29 +15,30 @@ const CreatorProfile = () => {
   const mintedNft = useSelector(state => state.nftMarketplaceReducer.mintedNFT);
 
   useEffect(() => {
-    if(!mintedNft){
-      console.log(mintedNft)
-      loadMintedNFT(marketplaceContract,account,nftContract,dispatch)
-    }
-  }, [])
+      if(marketplaceContract && account && nftContract){
+        loadMintedNFT(marketplaceContract,account,nftContract,dispatch)
+      }
+  }, [account, dispatch, marketplaceContract, nftContract])
   
-
   return (
     <div className="container">
-      <div className="row mt-4">
-        <div className="col-md-3">
-          <CardComponent />
+      {mintedNft ? (
+        <div className="row mt-4">
+          {
+            mintedNft.length > 0?
+            mintedNft.map((data,i)=>(
+              <div className="col-md-3" key={i}>
+              <CardComponent  nftData={data} />
+            </div>
+            ))
+            // eslint-disable-next-line react/no-unescaped-entities
+            :<h4 className="text-center">You din't mint any NFT yet</h4>
+          }
+
         </div>
-        <div className="col-md-3">
-          <CardComponent />
-        </div>
-        <div className="col-md-3">
-          <CardComponent />
-        </div>
-        <div className="col-md-3">
-          <CardComponent />
-        </div>
-      </div>
+      ) : (
+        <Spinner />
+      )}
     </div>
   );
 };
