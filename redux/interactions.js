@@ -10,7 +10,7 @@ var nftAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
 const formatNFTData = async(data,nftContract) =>{
   const tokenUri = await nftContract.tokenURI(data.token)
   const meta = await axios.get(tokenUri)
-
+console.log(data.token)
   const formattedData = {
     name:meta.data.name,
     image:meta.data.image,
@@ -93,4 +93,17 @@ export const etherToWei = (n) => {
     }))
 
     dispatch(actions.ownedNFTLoaded(formattedNFTList))
+  }
+
+  export const buyNFT = async(marketplaceContract,account,tokenId,price,dispatch,onSuccess,onError) =>{
+    dispatch(actions.nftPurchased(tokenId))
+    // try {
+      // var res = await marketplaceContract.buyItem(tokenId,{value:etherToWei(price),from:account})
+      // const receipt = await res.wait();
+      // onSuccess()
+    //   dispatch(actions.nftPurchased(tokenId))
+    //   console.log(receipt)
+    // } catch (error) {
+    //   onError(error.message)
+    // }
   }

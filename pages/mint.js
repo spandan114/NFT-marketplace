@@ -4,9 +4,11 @@ import { toast } from 'react-toastify';
 import { create } from "ipfs-http-client";
 import { useSelector } from "react-redux";
 import { etherToWei } from "../redux/interactions";
+import { useRouter } from "next/router";
 const client = create("https://ipfs.infura.io:5001/api/v0");
 
 const Mint = () => {
+  const router = useRouter()
   const formRef = useRef(null);
   const [file, setFile] = useState("");
   const [name, setName] = useState("");
@@ -113,7 +115,7 @@ const Mint = () => {
       
       const tx = await nftMarketplaceReducer.sellItem(metadata,etherToWei(price),nftReducer.address,{from:walletAddress,value:etherToWei("0.0001")})
       const receipt = await tx.wait();
-      console.log(receipt)
+      console.log(receipt.events[4].args)
       console.log("NFT metadata : ",metadata)
 
       setFile("")
@@ -131,7 +133,7 @@ const Mint = () => {
         draggable: true,
         progress: undefined,
         });
-
+        router.push("/creator-profile")
       setLoader(false)
     } catch (error) {
       setLoader(false)

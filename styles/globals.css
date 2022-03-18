@@ -102,3 +102,7 @@ width: 30% !important;
 .attr-badge{
   background: var(--light-black-s);
 }
+.buy-now{
+  width: 100%;
+  color: #1395ff;
+}

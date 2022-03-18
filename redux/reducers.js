@@ -57,6 +57,11 @@ export const nftMarketplaceReducer = (state = initialState, action) => {
         ...state,
         unsoldNFT: action.payload,
       };
+    case types.PURCHASED_SUCCESSFULLY:
+      return {
+        ...state,
+        unsoldNFT: state.unsoldNFT.filter((data) => data.token !== action.payload),
+      };
 
     default:
       return state;

@@ -44,6 +44,13 @@ export const ownedNFTLoaded = (nftList) =>{
     }
 }
 
+export const nftPurchased = (tokenId) =>{
+    return{
+        type:types.PURCHASED_SUCCESSFULLY,
+        payload:tokenId
+    }
+}
+
 // MARKETPLACE ACTIONS
 
 export const nftMarketplaceContractLoaded = (contract) =>{
