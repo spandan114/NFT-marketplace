@@ -64,7 +64,7 @@ const CardComponent = ({nftData}) => {
         
       </div>
       {
-        router.pathname === "/"?
+        router.pathname === "/" && nftData.creator !== account?
         <div className="card-footer text-muted">
         <button className="btn text-center buy-now btn-sm" onClick={()=>buyMarketplaceNft(nftData.token,nftData.price)}>Buy now</button>
      </div>

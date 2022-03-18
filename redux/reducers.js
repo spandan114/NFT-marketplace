@@ -57,6 +57,19 @@ export const nftMarketplaceReducer = (state = initialState, action) => {
         ...state,
         unsoldNFT: action.payload,
       };
+
+      case types.MINTED_SUCCESSFULLY:
+        var nftList;
+        if(state.unsoldNFT){
+          nftList = [...state.unsoldNFT,action.payload]
+        }else{
+          nftList = [action.payload]
+        }
+        return {
+          ...state,
+          unsoldNFT: nftList,
+        };
+      
     case types.PURCHASED_SUCCESSFULLY:
       return {
         ...state,

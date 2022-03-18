@@ -44,6 +44,13 @@ export const ownedNFTLoaded = (nftList) =>{
     }
 }
 
+export const nftMinted = (nftData) =>{
+    return{
+        type:types.MINTED_SUCCESSFULLY,
+        payload:nftData
+    }
+}
+
 export const nftPurchased = (tokenId) =>{
     return{
         type:types.PURCHASED_SUCCESSFULLY,
