@@ -10,8 +10,10 @@
 
 ### NFT list
 <img src="./images/nft_list.png"/>
+
 ### Buy NFT
 <img src="./images/buy_nft.png"/>
+
 ### Mint NFT
 <img src="./images/mint.png"/>
 
