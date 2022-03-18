@@ -1,10 +1,38 @@
 import Link from "next/link";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { loadAccount } from "../redux/interactions";
 
 const NavBar = () => {
 
+  const dispatch = useDispatch()
   const account = useSelector((state)=> state.web3Reducer.account)
+  const provider = useSelector((state)=> state.web3Reducer.connection)
+
+ const connectWallet = async()=>{
+  if (window.ethereum) {
+    window.ethereum.request({method:"eth_requestAccounts"})
+    .then(async res=>{
+      await loadAccount(provider,dispatch)
+    
+    }).catch(error=>{
+      alert(error.message)
+    })
+   } else {
+     window.alert(
+       "Non-Ethereum browser detected. You should consider trying MetaMask!"
+     );
+   }
+ }
+
+ const chainOrAccountChangedHandler = async() => {
+  // reload the page to avoid any errors with chain or account change.
+  window.location.reload();
+}
+	// listen for account changes
+	window.ethereum.on('accountsChanged', chainOrAccountChangedHandler);
+ // Listen for chain change
+	window.ethereum.on('chainChanged', chainOrAccountChangedHandler);
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -43,8 +71,8 @@ const NavBar = () => {
       <ul className="navbar-nav ms-auto">
         <li className="nav-item active">
           {/* eslint-disable-next-line @next/next/link-passhref */}
-          <Link  href="#">
-            <span className="nav-link">Connect with wallet</span>
+          <Link  href="#" >
+            <span className="nav-link" onClick={()=>connectWallet()}>Connect with wallet</span>
           </Link>
         </li>
         </ul>
