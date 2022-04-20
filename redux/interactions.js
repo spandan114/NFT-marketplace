@@ -4,9 +4,8 @@ import NFTMarketContract from "../artifacts/contracts/NFTMarket.sol/NFTMarket.js
 import NFTContract from "../artifacts/contracts/NFT.sol/NFT.json"
 import axios from "axios";
 
-var marketPlaceAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
-var nftAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-
+var marketPlaceAddress = process.env.NFT_MARKET_CONTRACT_ADDRESS
+var nftAddress = process.env.NFT_CONTRACT_ADDRESS
 export const formatNFTData = async(data,nftContract) =>{
   const tokenUri = await nftContract.tokenURI(data.token)
   const meta = await axios.get(tokenUri)
@@ -38,6 +37,7 @@ export const etherToWei = (n) => {
  export const loadWeb3 = async(dispatch)=>{
     if(window.ethereum){
     const provider = new ethers.providers.Web3Provider(window.ethereum,"any")
+
     dispatch(actions.web3Loaded(provider))
     const addresses = await provider.listAccounts(); 
     dispatch(actions.walletAddressLoaded(addresses[0]))

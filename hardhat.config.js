@@ -7,5 +7,15 @@ module.exports = {
     hardhat: {
       chainId: 31337
     },
-  }
+  },
+  // defaultNetwork: "ropsten",
+  // networks: {
+  //   hardhat: {
+  //   },
+  //   ropsten: {
+  //     url: ["ALCHEMY URL"],
+  //     accounts: ['METAMASK/OTHER WALLET PRIVATE KEY'],
+  //   }
+  // },
 };
+
