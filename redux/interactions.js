@@ -6,6 +6,7 @@ import axios from "axios";
 
 var marketPlaceAddress = process.env.NFT_MARKET_CONTRACT_ADDRESS
 var nftAddress = process.env.NFT_CONTRACT_ADDRESS
+
 export const formatNFTData = async(data,nftContract) =>{
   const tokenUri = await nftContract.tokenURI(data.token)
   const meta = await axios.get(tokenUri)
@@ -46,6 +47,15 @@ export const etherToWei = (n) => {
   }
   
   export const loadContracts = async(provider,dispatch) =>{
+
+    const { chainId } = await provider.getNetwork()
+    if(chainId !== process.env.CHAIN_ID){
+      return {
+        marketplace:null,
+        nft:null
+      }
+    }
+
     var signer ;
     const addresses = await provider.listAccounts(); 
     if(addresses.length > 0){
@@ -75,7 +85,13 @@ export const etherToWei = (n) => {
     dispatch(actions.walletAddressLoaded(connectedWallet))
   }
 
-  export const loadUnsoldNFT = async(marketplaceContract,nftContract,dispatch)=>{
+  export const loadUnsoldNFT = async(provider,marketplaceContract,nftContract,dispatch)=>{
+
+    const { chainId } = await provider.getNetwork()
+    if(chainId !== process.env.CHAIN_ID){
+      dispatch(actions.unsoldNFTLoaded([]))
+      return 
+    }
 
     var unsoldNft = await marketplaceContract.fetchMarketItems()
     const formattedNFTList = await Promise.all(unsoldNft.map(nft=>{
@@ -86,8 +102,11 @@ export const etherToWei = (n) => {
     dispatch(actions.unsoldNFTLoaded(formattedNFTList))
   }
 
-  export const loadMintedNFT = async(marketplaceContract,account,nftContract,dispatch)=>{
-    if(!account){
+  export const loadMintedNFT = async(provider,marketplaceContract,account,nftContract,dispatch)=>{
+
+    const { chainId } = await provider.getNetwork()
+    if(!account || chainId !== process.env.CHAIN_ID){
+      dispatch(actions.mintedNFTLoaded([]))
       return
     }
     var unsoldNft = await marketplaceContract.fetchCreatorItemsListed({from:account})
@@ -100,9 +119,12 @@ export const etherToWei = (n) => {
     dispatch(actions.mintedNFTLoaded(formattedNFTList))
   }
 
-  export const loadOwnedNFT = async(marketplaceContract,account,nftContract,dispatch)=>{
-    if(!account){
-      return
+  export const loadOwnedNFT = async(provider,marketplaceContract,account,nftContract,dispatch)=>{
+    
+    const { chainId } = await provider.getNetwork()
+    if(!account || chainId !== process.env.CHAIN_ID){
+      dispatch(actions.ownedNFTLoaded([]))
+      return 
     }
     var unsoldNft = await marketplaceContract.fetchOwnerItemsListed({from:account})
     

@@ -13,12 +13,13 @@ const CreatorProfile = () => {
   const nftContract = useSelector(state => state.nftReducer.contract);
   const marketplaceContract = useSelector(state => state.nftMarketplaceReducer.contract);
   const mintedNft = useSelector(state => state.nftMarketplaceReducer.mintedNFT);
+  const provider = useSelector(state => state.web3Reducer.connection);
 
   useEffect(() => {
-      if(marketplaceContract && account && nftContract){
-        loadMintedNFT(marketplaceContract,account,nftContract,dispatch)
-      }
-  }, [account, dispatch, marketplaceContract, nftContract])
+    if(provider){
+      loadMintedNFT(provider,marketplaceContract,account,nftContract,dispatch)
+    }
+  }, [provider])
   
   return (
     <div className="container">

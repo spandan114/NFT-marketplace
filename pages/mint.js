@@ -22,6 +22,7 @@ const Mint = () => {
   const walletAddress = useSelector(state=>state.web3Reducer.account)
   const nftReducer = useSelector(state=>state.nftReducer.contract)
   const nftMarketplaceReducer = useSelector(state=>state.nftMarketplaceReducer.contract)
+  const provider = useSelector(state => state.web3Reducer.connection);
 
   const addAttribute = (e) => {
     e.preventDefault();
@@ -49,6 +50,21 @@ const Mint = () => {
   };
 
   const uploadImageToIPFS = async()=> {
+
+    const { chainId } = await provider.getNetwork()
+    if(chainId !== process.env.CHAIN_ID){
+      toast.error('Invalid chain Id ! Please use ropsten test network :)', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+      return 
+    }
+
     setLoader(true)
     if (!name || !description || !price || !file) {
       toast.error("Please fill all the required fields !", {

@@ -48,6 +48,7 @@ export const nftMarketplaceReducer = (state = initialState, action) => {
         mintedNFT: action.payload,
       };
     case types.OWNED_NFT_LOADED:
+      console.log(action.payload)
       return {
         ...state,
         ownedNFT: action.payload,

@@ -17,7 +17,7 @@ function MyApp({ Component, pageProps }) {
   const loadBlockchain = async()=>{
     const provider = await loadWeb3(dispatch)
     const contracts = await loadContracts(provider,dispatch)
-    await loadUnsoldNFT(contracts.marketplace,contracts.nft,dispatch)
+    await loadUnsoldNFT(provider,contracts.marketplace,contracts.nft,dispatch)
   }
 
   return <><ToastContainer /><Component {...pageProps} /></>

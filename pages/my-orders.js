@@ -13,12 +13,13 @@ const MyOrders = () => {
   const nftContract = useSelector(state => state.nftReducer.contract);
   const marketplaceContract = useSelector(state => state.nftMarketplaceReducer.contract);
   const ownedNft = useSelector(state => state.nftMarketplaceReducer.ownedNFT);
+  const provider = useSelector(state => state.web3Reducer.connection);
 
   useEffect(() => {
-      if(marketplaceContract && account && nftContract){
-        loadOwnedNFT(marketplaceContract,account,nftContract,dispatch)
-      }
-  }, [account, dispatch, marketplaceContract, nftContract, ownedNft])
+    if(provider){
+    loadOwnedNFT(provider,marketplaceContract,account,nftContract,dispatch)
+    }
+  }, [provider])
   
 
   return (
